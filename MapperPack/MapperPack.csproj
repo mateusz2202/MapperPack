@@ -1,0 +1,14 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PackageId>ResultPattern</PackageId>
+    <Version>1.0.1</Version>
+    <Authors>MJ</Authors>
+    <Company>MJ</Company>
+  </PropertyGroup>
+
+</Project>
