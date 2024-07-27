@@ -30,6 +30,7 @@ public static class InsattlerMapper
     private static Assembly[] GetMapperAssembiles(this AppDomain domain, string searchPattern)
         => Directory
             .GetFiles(domain.BaseDirectory, searchPattern)
+            .Where(file => !Path.GetFileName(file).Contains("microsoft", StringComparison.CurrentCultureIgnoreCase))
             .Select(Assembly.LoadFrom)
             .ToArray();
 
