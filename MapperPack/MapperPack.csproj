@@ -2,10 +2,11 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
+    <PackageProjectUrl>https://github.com/mateusz2202/MapperPack</PackageProjectUrl>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
   </PropertyGroup>
   <PropertyGroup>
-    <PackageId>ResultPattern</PackageId>
+    <PackageId>MapperPack</PackageId>
     <Version>1.0.1</Version>
     <Authors>MJ</Authors>
     <Company>MJ</Company>
