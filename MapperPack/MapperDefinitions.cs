@@ -33,25 +33,31 @@ public abstract class Mapper<TModel, TEntity> : MapperBase, IMapper<TModel, TEnt
         => GetMapper<TModel, TEntity>(MapDefinition)(source);
 
     public IEnumerable<TModel> Map(IEnumerable<TEntity> source)
-        => source.Select(Map);
+        => GetMapperCollection<TModel, TEntity>(source, MapDefinition);
 
     public IEnumerable<TEntity> Map(IEnumerable<TModel> source)
-        => source.Select(Map);
+        => GetMapperCollection<TEntity, TModel>(source, MapDefinition);
 
     public async Task<TModel> MapAsync(TEntity source, CancellationToken cancellationToken = default)
-        => await Task.FromResult(Map(source));
+        => await Task.Run(() => Map(source), cancellationToken);
 
     public async Task<TEntity> MapAsync(TModel source, CancellationToken cancellationToken = default)
-        => await Task.FromResult(Map(source));
+        => await Task.Run(() => Map(source), cancellationToken);
 
     public async Task<IEnumerable<TModel>> MapAsync(IEnumerable<TEntity> source, CancellationToken cancellationToken = default)
-        => await Task.WhenAll(source.Select(async entity => await MapAsync(entity, cancellationToken)));
+        => await Task.Run(() => Map(source), cancellationToken);
 
     public async Task<IEnumerable<TEntity>> MapAsync(IEnumerable<TModel> source, CancellationToken cancellationToken = default)
-        => await Task.WhenAll(source.Select(async entity => await MapAsync(entity, cancellationToken)));
+        => await Task.Run(() => Map(source), cancellationToken);
 }
 public abstract class MapperBase
 {
+    protected static IEnumerable<TDestination> GetMapperCollection<TDestination, TSource>(IEnumerable<TSource> source, Action<TSource, TDestination> definitions)
+    {
+        var lambda = GetMapper(definitions);
+        return source.Select(lambda);
+    }
+
     protected static Func<TSource, TDestination> GetMapper<TSource, TDestination>(Action<TSource, TDestination> definitions)
     {
         var sourceType = typeof(TSource);

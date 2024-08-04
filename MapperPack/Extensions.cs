@@ -5,14 +5,18 @@ using System.Linq.Expressions;
 using System.Reflection;
 
 namespace MapperPack;
-public static class Extensions
+
+public static class MapperExtensions
 {
     public static IEnumerable<Expression> GetArguments(this ConstructorInfo constructor, Type sourceType, ParameterExpression sourceParameter)
     {
         foreach (var param in constructor.GetParameters())
-            if (sourceType.GetProperty(param.Name == "FullName" ? "Name" : param.Name) is PropertyInfo sourceProperty)
+        {
+            if (!param.ParameterType.IsValueType && param.ParameterType != typeof(string))
+                continue;
+            else if (sourceType.GetProperty(param.Name == "FullName" ? "Name" : param.Name) is PropertyInfo sourceProperty)
                 yield return Expression.Property(sourceParameter, sourceProperty);
-
+        }
     }
 
     public static ConstructorInfo GetDefaultConstructor(this Type type)
@@ -28,8 +32,11 @@ public static class Extensions
     public static IEnumerable<MemberBinding> GetMemberBindings(this Type sourceType, Type destinationType, ParameterExpression sourceParameter)
     {
         foreach (var sourceProperty in sourceType.GetProperties())
-            if (destinationType.GetProperty(sourceProperty.Name) is PropertyInfo destinationProperty && destinationProperty.CanWrite)
+        {
+            if (!sourceProperty.PropertyType.IsValueType && sourceProperty.PropertyType != typeof(string))
+                continue;
+            else if (destinationType.GetProperty(sourceProperty?.Name) is PropertyInfo destinationProperty && destinationProperty.CanWrite)
                 yield return Expression.Bind(destinationProperty, Expression.Property(sourceParameter, sourceProperty));
-
+        }
     }
 }

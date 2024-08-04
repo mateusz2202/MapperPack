@@ -39,6 +39,7 @@ public static class InsattlerMapper
             .SelectMany(x => x.GetTypes())
             .Where(condition)
             .ToList();
+
     private static bool IsMapper(this Type t) => !t.IsAbstract && t.BaseType != null &&
               t.BaseType.IsGenericType &&
               t.BaseType.GetGenericTypeDefinition() == typeof(Mapper<,>);
