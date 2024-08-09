@@ -1,46 +1,22 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.AspNetCore.Builder;
+using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Reflection;
 
 namespace MapperPack;
 
-public static class InsattlerMapper
+public static partial class InsattlerMapper
 {
     public static IServiceCollection AddMapper(this IServiceCollection services)
-    {
-        AppDomain.CurrentDomain
-           .GetTypesFromAssembiles(IsMapper, "*.dll")
-           .ForEach(x => services.AddScoped(x));
-
-        return services;
-    }
+        => AppDomain.CurrentDomain
+          .GetTypesFromAssembiles(IsMapperDefinition, "*.dll")
+          .InstallMaps(services);
 
     public static IServiceCollection AddMapper(this IServiceCollection services, string searchPattern)
-    {
-        AppDomain.CurrentDomain
-           .GetTypesFromAssembiles(IsMapper, searchPattern)
-           .ForEach(x => services.AddScoped(x));
+        => AppDomain.CurrentDomain
+          .GetTypesFromAssembiles(IsMapperDefinition, searchPattern)
+          .InstallMaps(services);
 
-        return services;
-    }
+    public static IApplicationBuilder UseMapper(this IApplicationBuilder app)
+        => UseMaps(app);
 
-    private static Assembly[] GetMapperAssembiles(this AppDomain domain, string searchPattern)
-        => Directory
-            .GetFiles(domain.BaseDirectory, searchPattern)
-            .Where(file => !Path.GetFileName(file).Contains("microsoft", StringComparison.CurrentCultureIgnoreCase))
-            .Select(Assembly.LoadFrom)
-            .ToArray();
-
-    private static List<Type> GetTypesFromAssembiles(this AppDomain domain, Func<Type, bool> condition, string searchPattern)
-        => domain.GetMapperAssembiles(searchPattern)
-            .SelectMany(x => x.GetTypes())
-            .Where(condition)
-            .ToList();
-
-    private static bool IsMapper(this Type t) => !t.IsAbstract && t.BaseType != null &&
-              t.BaseType.IsGenericType &&
-              t.BaseType.GetGenericTypeDefinition() == typeof(Mapper<,>);
 }

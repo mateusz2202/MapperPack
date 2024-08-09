@@ -4,7 +4,7 @@ using System.Linq;
 using System.Linq.Expressions;
 using System.Reflection;
 
-namespace MapperPack;
+namespace MapperPack.Utils;
 
 public static class MapperExtensions
 {
