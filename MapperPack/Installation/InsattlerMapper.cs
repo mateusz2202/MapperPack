@@ -32,7 +32,7 @@ public static partial class InsattlerMapper
 
     private static IServiceCollection InstallMaps(this List<Type> maps, IServiceCollection services)
     {
-        maps.ForEach(x => services.AddTransient(typeof(IMapDefinition), x));
+        maps.ForEach(x => services.AddScoped(typeof(IMapDefinition), x));
 
         return services
                 .AddScoped(typeof(IMapper<,>), typeof(Mapper<,>))
@@ -43,7 +43,9 @@ public static partial class InsattlerMapper
     {
         var mapperCache = app.ApplicationServices.GetRequiredService<MapperCache>();
 
-        var maps = app.ApplicationServices.GetServices(typeof(IMapDefinition));
+        using var scope = app.ApplicationServices.CreateAsyncScope();
+
+        var maps = scope.ServiceProvider.GetServices(typeof(IMapDefinition));
 
         foreach (var instance in maps)
         {

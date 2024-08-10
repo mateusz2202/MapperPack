@@ -60,7 +60,7 @@ public class MapperBase
     {
         var map = GetMapper<TSource, TDestination>();
 
-        return source.Select(map);
+        return source.Select(map).ToList();
     }
 
     protected static Func<TSource, TDestination> GetMapper<TSource, TDestination>()
