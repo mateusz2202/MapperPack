@@ -3,7 +3,7 @@
 ```powershell
 dotnet add package MapperPack
 ```
-2. Add to program
+2. Add to program 
 ```c#
 builder.Services.AddMapper();
 
